@@ -6,10 +6,9 @@ COPY package.json ./
 RUN npm install
 
 COPY src ./src
-COPY .env ./.env
 
 RUN mkdir -p /app/data
 
-EXPOSE 3000
+EXPOSE 5622
 
 CMD ["node", "src/server.js"]
