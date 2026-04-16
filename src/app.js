@@ -2,6 +2,7 @@ import cors from "@fastify/cors";
 import Fastify from "fastify";
 import { env } from "./config/env.js";
 import faceitAuthRoutes from "./routes/faceit-auth.js";
+import faceitDataRoutes from "./routes/faceit-data.js";
 import healthRoutes from "./routes/health.js";
 import steamRoutes from "./routes/steam.js";
 
@@ -17,6 +18,7 @@ export async function buildApp() {
 
 	await app.register(healthRoutes);
 	await app.register(faceitAuthRoutes);
+	await app.register(faceitDataRoutes);
 	await app.register(steamRoutes);
 
 	return app;

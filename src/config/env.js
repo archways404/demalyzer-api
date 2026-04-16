@@ -14,6 +14,7 @@ const FACEIT_CLIENT_ID = required(
 	"FACEIT_CLIENT_ID",
 	process.env.FACEIT_CLIENT_ID,
 );
+
 const FACEIT_CLIENT_SECRET = required(
 	"FACEIT_CLIENT_SECRET",
 	process.env.FACEIT_CLIENT_SECRET,
@@ -24,11 +25,18 @@ const FACEIT_REDIRECT_URI = required(
 	process.env.FACEIT_REDIRECT_URI,
 );
 
+const FACEIT_DATA_API_KEY = required(
+	"FACEIT_DATA_API_KEY",
+	process.env.FACEIT_DATA_API_KEY,
+);
+
 const FACEIT_OAUTH_AUTHORIZE_URL =
 	process.env.FACEIT_OAUTH_AUTHORIZE_URL ?? "https://accounts.faceit.com/";
+
 const FACEIT_OAUTH_TOKEN_URL =
 	process.env.FACEIT_OAUTH_TOKEN_URL ??
 	"https://api.faceit.com/auth/v1/oauth/token";
+
 const FACEIT_OAUTH_USERINFO_URL =
 	process.env.FACEIT_OAUTH_USERINFO_URL ??
 	"https://api.faceit.com/auth/v1/resources/userinfo";
@@ -41,6 +49,7 @@ export const env = {
 	FACEIT_CLIENT_ID,
 	FACEIT_CLIENT_SECRET,
 	FACEIT_REDIRECT_URI,
+	FACEIT_DATA_API_KEY,
 	FACEIT_OAUTH_AUTHORIZE_URL,
 	FACEIT_OAUTH_TOKEN_URL,
 	FACEIT_OAUTH_USERINFO_URL,
