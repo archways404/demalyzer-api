@@ -43,7 +43,7 @@ export default async function faceitAuthRoutes(app) {
 
 		if (error) {
 			return reply.redirect(
-				`${env.FRONTEND_ERROR_URL}?reason=${encodeURIComponent(String(error))}`,
+				`demalyzer://faceit/callback?error=${encodeURIComponent(String(error))}`,
 			);
 		}
 
@@ -117,7 +117,6 @@ export default async function faceitAuthRoutes(app) {
 			});
 		}
 
-		// One-time use
 		completedFaceitLogins.delete(sessionId);
 
 		return {

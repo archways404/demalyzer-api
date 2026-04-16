@@ -1,5 +1,4 @@
 import "dotenv/config";
-import path from "node:path";
 
 function required(name, value) {
 	if (!value) {
@@ -34,15 +33,6 @@ const FACEIT_OAUTH_USERINFO_URL =
 	process.env.FACEIT_OAUTH_USERINFO_URL ??
 	"https://api.faceit.com/auth/v1/resources/userinfo";
 
-const FRONTEND_SUCCESS_URL =
-	process.env.FRONTEND_SUCCESS_URL ?? "http://localhost:5173/";
-const FRONTEND_ERROR_URL =
-	process.env.FRONTEND_ERROR_URL ?? "http://localhost:5173/?faceit=error";
-
-const CONFIG_PATH =
-	process.env.DEMALYZER_CONFIG_PATH ??
-	path.resolve(process.cwd(), "data/config.json");
-
 const CORS_ORIGIN = process.env.CORS_ORIGIN ?? true;
 
 export const env = {
@@ -54,8 +44,5 @@ export const env = {
 	FACEIT_OAUTH_AUTHORIZE_URL,
 	FACEIT_OAUTH_TOKEN_URL,
 	FACEIT_OAUTH_USERINFO_URL,
-	FRONTEND_SUCCESS_URL,
-	FRONTEND_ERROR_URL,
-	CONFIG_PATH,
 	CORS_ORIGIN,
 };
