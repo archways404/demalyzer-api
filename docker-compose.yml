@@ -1,7 +1,7 @@
 services:
     demalyzer-api:
         build:
-            context: ./api
+            context: .
             dockerfile: Dockerfile
         container_name: demalyzer-api
         restart: unless-stopped
