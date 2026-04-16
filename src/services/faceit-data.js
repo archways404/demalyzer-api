@@ -70,3 +70,41 @@ export async function getPlayerStats(playerId, game = "cs2") {
 export async function getPlayerById(playerId) {
 	return faceitDataRequest(`/players/${encodeURIComponent(playerId)}`);
 }
+
+export async function getDetailedPlayerMatchHistory(playerId, options = {}) {
+	const history = await getPlayerMatchHistory(playerId, options);
+	const items = history.items ?? [];
+
+	const detailedItems = await Promise.all(
+		items.map(async (item) => {
+			try {
+				const matchDetail = await getMatch(item.match_id);
+
+				return {
+					...item,
+					matchDetail,
+					map:
+						matchDetail?.voting?.map?.pick?.[0] ||
+						matchDetail?.i18n?.game_map ||
+						matchDetail?.game_map ||
+						matchDetail?.map ||
+						null,
+					demoUrl: matchDetail?.demo_url ?? null,
+				};
+			} catch (error) {
+				return {
+					...item,
+					matchDetail: null,
+					map: null,
+					demoUrl: null,
+					matchDetailError: error.message || "Failed to fetch match detail.",
+				};
+			}
+		}),
+	);
+
+	return {
+		...history,
+		items: detailedItems,
+	};
+}

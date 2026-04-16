@@ -1,4 +1,5 @@
 import {
+	getDetailedPlayerMatchHistory,
 	getMatch,
 	getPlayerById,
 	getPlayerMatchHistory,
@@ -32,6 +33,36 @@ export default async function faceitDataRoutes(app) {
 			});
 		}
 	});
+
+	app.get(
+		"/api/faceit/players/:playerId/history-detailed",
+		async (request, reply) => {
+			try {
+				const { playerId } = request.params;
+				const { game, offset, limit, from, to } = request.query ?? {};
+
+				const data = await getDetailedPlayerMatchHistory(playerId, {
+					game,
+					offset,
+					limit,
+					from,
+					to,
+				});
+
+				return {
+					ok: true,
+					playerId,
+					...data,
+				};
+			} catch (error) {
+				request.log.error(error, "Failed to fetch FACEIT detailed history");
+				return reply.code(500).send({
+					ok: false,
+					error: error.message || "Failed to fetch FACEIT detailed history.",
+				});
+			}
+		},
+	);
 
 	app.get("/api/faceit/matches/:matchId", async (request, reply) => {
 		try {
