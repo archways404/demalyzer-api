@@ -94,9 +94,10 @@ export default async function faceitAuthRoutes(app) {
 				"FACEIT login completed",
 			);
 
-			return reply.redirect(
-				`demalyzer://faceit/callback?sessionId=${encodeURIComponent(sessionId)}`,
-			);
+			const deepLink = `demalyzer://faceit/callback?sessionId=${encodeURIComponent(sessionId)}`;
+			app.log.info({ deepLink }, "Redirecting to Electron deep link");
+
+			return reply.redirect(deepLink);
 		} catch (err) {
 			app.log.error(err, "FACEIT callback failed");
 			return reply.redirect(
@@ -128,6 +129,14 @@ export default async function faceitAuthRoutes(app) {
 				refreshToken: session.refreshToken,
 				idToken: session.idToken,
 			},
+		};
+	});
+
+	app.get("/", async () => {
+		return {
+			ok: false,
+			error: "Root hit",
+			expected: "/auth/faceit/callback",
 		};
 	});
 }
