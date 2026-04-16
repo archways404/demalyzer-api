@@ -7,6 +7,7 @@ import {
 import { generateCodeChallenge, generateCodeVerifier } from "../utils/pkce.js";
 
 const pendingStates = new Map();
+const completedFaceitLogins = new Map();
 
 export default async function faceitAuthRoutes(app) {
 	app.get("/auth/faceit/start", async (_request, reply) => {
@@ -42,7 +43,7 @@ export default async function faceitAuthRoutes(app) {
 
 		if (error) {
 			return reply.redirect(
-				`${env.FRONTEND_ERROR_URL}&reason=${encodeURIComponent(String(error))}`,
+				`${env.FRONTEND_ERROR_URL}?reason=${encodeURIComponent(String(error))}`,
 			);
 		}
 
@@ -73,37 +74,60 @@ export default async function faceitAuthRoutes(app) {
 				userJson.nickname ??
 				[userJson.given_name, userJson.family_name].filter(Boolean).join(" ");
 
-			const saved = mergeFaceitIntoConfig({
+			const sessionId = crypto.randomUUID();
+
+			completedFaceitLogins.set(sessionId, {
 				playerId,
 				nickname,
 				accessToken,
 				refreshToken,
 				idToken,
+				createdAt: Date.now(),
 			});
 
 			app.log.info(
 				{
-					playerId: saved.faceit.playerId,
-					nickname: saved.faceit.nickname,
+					sessionId,
+					playerId,
+					nickname,
 				},
-				"FACEIT login saved",
+				"FACEIT login completed",
 			);
 
-			return reply.redirect(`${env.FRONTEND_SUCCESS_URL}?faceit=connected`);
+			return reply.redirect(
+				`${env.FRONTEND_SUCCESS_URL}?faceit=connected&sessionId=${encodeURIComponent(sessionId)}`,
+			);
 		} catch (err) {
 			app.log.error(err, "FACEIT callback failed");
 			return reply.redirect(
-				`${env.FRONTEND_ERROR_URL}&reason=${encodeURIComponent(err.message)}`,
+				`${env.FRONTEND_ERROR_URL}?reason=${encodeURIComponent(err.message)}`,
 			);
 		}
 	});
 
-	app.get("/api/faceit/status", async () => {
-		const config = ensureConfigFile();
+	app.get("/api/faceit/session/:sessionId", async (request, reply) => {
+		const { sessionId } = request.params;
+		const session = completedFaceitLogins.get(sessionId);
+
+		if (!session) {
+			return reply.code(404).send({
+				ok: false,
+				error: "FACEIT session not found or already consumed.",
+			});
+		}
+
+		// One-time use
+		completedFaceitLogins.delete(sessionId);
+
 		return {
-			connected: Boolean(config.faceit?.connected),
-			playerId: config.faceit?.playerId ?? "",
-			nickname: config.faceit?.nickname ?? "",
+			ok: true,
+			faceit: {
+				playerId: session.playerId,
+				nickname: session.nickname,
+				accessToken: session.accessToken,
+				refreshToken: session.refreshToken,
+				idToken: session.idToken,
+			},
 		};
 	});
 }
