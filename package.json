@@ -1,0 +1,14 @@
+{
+	"name": "demalyzer-api",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "node --watch src/server.js",
+		"start": "node src/server.js"
+	},
+	"dependencies": {
+		"@fastify/cors": "^10.0.1",
+		"dotenv": "^16.4.5",
+		"fastify": "^5.0.0"
+	}
+}
