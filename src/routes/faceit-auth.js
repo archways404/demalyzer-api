@@ -95,12 +95,12 @@ export default async function faceitAuthRoutes(app) {
 			);
 
 			return reply.redirect(
-				`${env.FRONTEND_SUCCESS_URL}?faceit=connected&sessionId=${encodeURIComponent(sessionId)}`,
+				`demalyzer://faceit/callback?sessionId=${encodeURIComponent(sessionId)}`,
 			);
 		} catch (err) {
 			app.log.error(err, "FACEIT callback failed");
 			return reply.redirect(
-				`${env.FRONTEND_ERROR_URL}?reason=${encodeURIComponent(err.message)}`,
+				`demalyzer://faceit/callback?error=${encodeURIComponent(err.message)}`,
 			);
 		}
 	});
